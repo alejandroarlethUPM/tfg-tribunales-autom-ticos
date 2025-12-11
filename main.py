@@ -3,6 +3,7 @@ from tribunales import crear_tribunales_depto, distribuir_tribunales
 from data_io import load_disponibilidad, load_tfgs_por_dptos, read_sheet, get_sheet_names, get_num_rows
 from asignacion import cargar_estudiantes, asignar_alumnos_a_tribunales
 from optimizacion import rebalancear_tribunales
+from agrupacion import agrupar_tfgs_por_departamentos
 
 # Suprimir warnings de openpyxl
 import warnings
@@ -16,10 +17,10 @@ sys.dont_write_bytecode = True
 # ============================================================================
 # CONFIGURACIÓN
 # ============================================================================
-PATH = "C:/Users/A/Desktop/TFG/src/"
+PATH = "C:/Users/A/Desktop/TFG/src/data/"
 FILENAME_DISPONIBILIDAD = "disponibilidad_TFG.xlsx"
+FILENAME = "TFGs_presentados_enviar.xlsx"
 FILENAME_TFGS = "TFGs_por_dptos.xlsx"
-
 # Parámetros de tribunales
 INIT_FRANJA = 3  # columna donde comienzan las franjas horarias
 NUM_FRANJAS = 5  # número total de franjas horarias
@@ -30,9 +31,15 @@ MIN_ESTUDIANTES_POR_TRIBUNAL = 4  # mínimo de estudiantes por tribunal
 # MAIN
 # ============================================================================
 def main():
-    #print("="*80)
-    #print("SISTEMA DE CREACIÓN DE TRIBUNALES Y ASIGNACIÓN DE ESTUDIANTES")
-    #print("="*80)
+    # 0. AGRUPAR TFGs POR DEPARTAMENTOS (pre-procesamiento)
+    print("="*80)
+    print("PASO 0: AGRUPANDO TFGs POR DEPARTAMENTOS")
+    print("="*80)
+    agrupar_tfgs_por_departamentos(PATH, FILENAME_DISPONIBILIDAD)
+    
+    print("\n" + "="*80)
+    print("SISTEMA DE CREACIÓN DE TRIBUNALES Y ASIGNACIÓN DE ESTUDIANTES")
+    print("="*80)
     
     # 1. CARGAR DISPONIBILIDAD DE PROFESORES
     #print("\n[1] Cargando disponibilidad de profesores...")
