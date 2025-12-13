@@ -89,6 +89,7 @@ def agrupar_tfgs_por_departamentos(path,filename):
         4 = Matricula (correo sin @)
         5 = Título (del trabajo)
         6 = Tutor-es (correo y nombre de los tutores)
+        7 = Grado
     """
 
     st = pd.read_excel(file, header=0)
@@ -98,7 +99,7 @@ def agrupar_tfgs_por_departamentos(path,filename):
     defensas = list()
     for i in range(st.shape[0]):
         tfg = dict()
-        for key in st.keys()[:7]:
+        for key in st.keys()[:8]:
             tfg.update({key: st[key][i]})
         defensas.append(tfg)
 
@@ -110,22 +111,23 @@ def agrupar_tfgs_por_departamentos(path,filename):
 
     for tfg in defensas:
         found = False
-        print("\n\tTutor de la propuesta: ", tfg[st.keys()[6]])
+        #print("\n\tTutor de la propuesta: ", tfg[st.keys()[6]])
         for dpto in dptos:
             for prof in profesores[dpto]:   # Se recorren todos los profesores por cada departamento
                 if prof in tfg[st.keys()[6]]:   # Se ve si el profesor es tutor de un trabajo
                     found = True
-                    print("\t\tTrabajo tutorizado por el profesor ", prof, " del departamento ", dpto)
+                    #print("\t\tTrabajo tutorizado por el profesor ", prof, " del departamento ", dpto)
                     defensas_gather[dpto].append(tfg)
                     break
             if found: 
                 break
 
-    print("\n\n\n")
+    #print("\n\n\n")
 
     # Se imprime la cantidad de TFGs que dirige cada departamento
     for key in defensas_gather:
-        print(" El departamento ", key," ha dirigido ", len(defensas_gather[key]), " trabajos.")
+        pass
+        #print(" El departamento ", key," ha dirigido ", len(defensas_gather[key]), " trabajos.")
 
 
     filename = "TFGs_por_dptos.xlsx"

@@ -4,6 +4,7 @@ from data_io import load_disponibilidad, load_tfgs_por_dptos, read_sheet, get_sh
 from asignacion import cargar_estudiantes, asignar_alumnos_a_tribunales
 from optimizacion import rebalancear_tribunales
 from agrupacion import agrupar_tfgs_por_departamentos
+from exportar import exportar_csv_por_grado
 
 # Suprimir warnings de openpyxl
 import warnings
@@ -21,11 +22,14 @@ PATH = "C:/Users/A/Desktop/TFG/src/data/"
 FILENAME_DISPONIBILIDAD = "disponibilidad_TFG.xlsx"
 FILENAME = "TFGs_presentados_enviar.xlsx"
 FILENAME_TFGS = "TFGs_por_dptos.xlsx"
+# Salida de CSVs por grado
+OUTPUT_DIR = "C:/Users/A/Desktop/TFG/src/outputs/"
 # Parámetros de tribunales
-INIT_FRANJA = 3  # columna donde comienzan las franjas horarias
+INIT_FRANJA = 4  # columna donde comienzan las franjas horarias
 NUM_FRANJAS = 5  # número total de franjas horarias
 MAX_ESTUDIANTES_POR_TRIBUNAL = 6  # máximo de estudiantes por tribunal
 MIN_ESTUDIANTES_POR_TRIBUNAL = 4  # mínimo de estudiantes por tribunal
+
 
 # ============================================================================
 # MAIN
@@ -132,6 +136,11 @@ def main():
     #print(f"{'='*80}")
     
     todas_asignaciones = rebalancear_tribunales(todos_tribunales, todas_asignaciones)
+
+    # ========================================================================
+    # EXPORTAR CSV POR GRADO
+    # ========================================================================
+    exportar_csv_por_grado(todos_tribunales, todas_asignaciones, OUTPUT_DIR)
     
     # ========================================================================
     # IMPRIMIR RESUMEN FINAL

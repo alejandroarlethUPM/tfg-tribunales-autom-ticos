@@ -20,8 +20,8 @@ def cargar_estudiantes(file_tfgs):
             estudiantes[trabajo_id] = {
                 'nombre': df.iloc[i, 3],
                 'tutores': correos,
-                'departamento': hoja
-                #'grado': df.iloc[i, 4],  # columna 4 = grado
+                'departamento': hoja,
+                'grado': df.iloc[i, -1],  # última columna: grado del estudiante
             }
     return estudiantes
 
