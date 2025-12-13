@@ -1,4 +1,5 @@
 import random as rnd
+import math
 
 def distribuir_tribunales(num_tribunales_necesarios, num_franjas):
     """
@@ -35,9 +36,12 @@ def crear_tribunales_depto(df_depto, init_franja, num_trib_por_franja):
     # Construir disponibilidad y participación
     disponibilidad = {}
     participacion = {}
+    peso_profesor = {}
     for i in range(df_depto.shape[0]):
         correo = df_depto[keys[1]][i]
         participacion[correo] = df_depto[keys[2]][i]
+        valor_peso = df_depto[keys[3]][i] if len(keys) > 3 else 0
+        peso_profesor[correo] = valor_peso
         disp = set()
         for turno in turnos:
             if df_depto[turno][i] == "Sí":
@@ -59,6 +63,10 @@ def crear_tribunales_depto(df_depto, init_franja, num_trib_por_franja):
 
     prof_needed = sum(num_prof.values())
 
+    def peso_prof(correo):
+        #Calcula peso: participación previa + peso dado en Excel.
+        return participacion[correo] + peso_profesor.get(correo, 0)
+
     # Algoritmo greedy de asignación de profesores
     while prof_needed > 0 and num_prof:
         menor = min(holgura.values())
@@ -69,9 +77,9 @@ def crear_tribunales_depto(df_depto, init_franja, num_trib_por_franja):
         if not select_prof:
             break
         
-        # Filtrar por menor participación
-        min_part = min(participacion[p] for p in select_prof)
-        select_prof = [p for p in select_prof if participacion[p] == min_part]
+        # Filtrar por menor peso (participación + carga de tutorías)
+        min_peso = min(peso_prof(p) for p in select_prof)
+        select_prof = [p for p in select_prof if peso_prof(p) == min_peso]
         
         # Filtrar por menor disponibilidad
         min_disp = min(len(disponibilidad[p]) for p in select_prof)

@@ -1,26 +1,6 @@
-"""
-Este programa agrupa los TFGs por departamento. La intención es intentar que los
-tribunales que se formen sean lo más afines posibles.
-
-Tiene dos inputs:
-  1. El excel con la disponiblidad de los profesores de TODOS los departamentos.
-  Aquí únicamente usamos la lista de sus correos electrónicos y el departamento
-  al que están adscritos
-  2. El excel con los TFGs que tienen que ser defendidos. Estos se han
-  descargado de la aplicación en TFGs entregados.
-El output es un excel donde cada hoja contiene los TFGs de cada departamento.
-
-TODO: en el excel con los TFGs, el dato de los tutores aparecen (cuando hay
-cotutela) dos direcciones de correo. Se tiene en cuenta el primero que aparece.
-Esto es un problema porque puede ocurrir que tutor y cotutor no sean del mismo
-departamento y se adscriba la tutela al departamento del cotutor y no del tutor,
-que es el objetivo.
-
-"""
-
 import pandas as pd
-
 import random as rnd
+
 def agrupar_tfgs_por_departamentos(path,filename):
     """
     Vamos a crear una base de datos de profesores agrupados por el departamento al que pertenecen
@@ -43,9 +23,10 @@ def agrupar_tfgs_por_departamentos(path,filename):
     0 = apellidos y nombre del profesor
     1 = correo electrónico del profesor
     2 = el número de veces que ha participado en un tribunal
-    3 - 5 = primer día
-    6 - 9 = segundo día
-    10 - 12 = tercer día
+    3 = cantidad de alumnos que ha tutorizado
+    4 - 6 = primer día
+    7 - 10 = segundo día
+    11 - 13 = tercer día
     """
 
     df = pd.ExcelFile(file)
