@@ -18,12 +18,14 @@ sys.dont_write_bytecode = True
 # ============================================================================
 # CONFIGURACIÓN
 # ============================================================================
+# Usar rutas relativas para API (se sobrescriben en run_pipeline)
 PATH = "C:/Users/A/Desktop/TFG/src/back/data/"
 FILENAME_DISPONIBILIDAD = "disponibilidad_TFG.xlsx"
 FILENAME = "TFGs_presentados_enviar.xlsx"
 FILENAME_TFGS = "TFGs_por_dptos.xlsx"
 # Salida de CSVs por grado
 OUTPUT_DIR = "C:/Users/A/Desktop/TFG/src/back/outputs/"
+
 # Parámetros de tribunales
 INIT_FRANJA = 4  # columna donde comienzan las franjas horarias
 NUM_FRANJAS = 5  # número total de franjas horarias
@@ -32,39 +34,52 @@ MIN_ESTUDIANTES_POR_TRIBUNAL = 4  # mínimo de estudiantes por tribunal
 
 
 # ============================================================================
-# MAIN
+# PIPELINE FUNCTION (reutilizable desde API)
 # ============================================================================
-def main():
-    # Fijar semilla para resultados reproducibles
-    import random
-    random.seed(42)
+def run_pipeline(input_dir, output_dir, seed=42):
+    """
+    Ejecuta el pipeline completo de creación de tribunales.
     
-    # 0. AGRUPAR TFGs POR DEPARTAMENTOS (pre-procesamiento)
+    Args:
+        input_dir (str): ruta al directorio con los Excel de entrada
+        output_dir (str): ruta al directorio donde guardar los CSV
+        seed (int): semilla para reproducibilidad
+    
+    Returns:
+        dict: estadísticas finales
+    """
+    import random
+    import os
+    random.seed(seed)
+    
+    # Crear directorio output si no existe
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Usar input_dir como base
+    path = input_dir
+    
+    # 0. AGRUPAR TFGs POR DEPARTAMENTOS
     print("="*80)
     print("PASO 0: AGRUPANDO TFGs POR DEPARTAMENTOS")
     print("="*80)
-    agrupar_tfgs_por_departamentos(PATH, FILENAME_DISPONIBILIDAD)
+    agrupar_tfgs_por_departamentos(path, FILENAME_DISPONIBILIDAD)
     
     print("\n" + "="*80)
     print("SISTEMA DE CREACIÓN DE TRIBUNALES Y ASIGNACIÓN DE ESTUDIANTES")
     print("="*80)
     
     # 1. CARGAR DISPONIBILIDAD DE PROFESORES
-    #print("\n[1] Cargando disponibilidad de profesores...")
-    file_disponibilidad = load_disponibilidad(PATH, FILENAME_DISPONIBILIDAD)
-    #print(f"    Departamentos disponibles: {get_sheet_names(file_disponibilidad)}")
+    file_disponibilidad = load_disponibilidad(path, FILENAME_DISPONIBILIDAD)
     
     # 2. CONSTRUIR MAPEO PROFESOR → DEPARTAMENTO
-    #print("\n[2] Construyendo mapeo profesor → departamento...")
     profesor_departamento, profesores_por_dpto = build_profesor_departamento(
-        file_disponibilidad, PATH, FILENAME_DISPONIBILIDAD
+        file_disponibilidad, path, FILENAME_DISPONIBILIDAD
     )
     #print(f"    Total de profesores mapeados: {len(profesor_departamento)}")
     #print(f"    Departamentos: {list(profesores_por_dpto.keys())}")
     
     # 3. CARGAR ESTUDIANTES
-    #print("\n[3] Cargando estudiantes...")
-    file_tfgs = load_tfgs_por_dptos(PATH, FILENAME_TFGS)
+    file_tfgs = load_tfgs_por_dptos(path, FILENAME_TFGS)
     estudiantes = cargar_estudiantes(file_tfgs)
     #print(f"    Total de estudiantes cargados: {len(estudiantes)}")
     
@@ -144,22 +159,17 @@ def main():
     # ========================================================================
     # EXPORTAR CSV POR GRADO
     # ========================================================================
-    exportar_csv_por_grado(todos_tribunales, todas_asignaciones, OUTPUT_DIR)
+    exportar_csv_por_grado(todos_tribunales, todas_asignaciones, output_dir)
     
     # ========================================================================
-    # IMPRIMIR RESUMEN FINAL
+    # CALCULAR ESTADÍSTICAS FINALES
     # ========================================================================
-    # Estadísticas globales
     total_tribunales = 0
     total_alumnos_asignados = 0
-    tribunales_completos = 0  # ≥4 alumnos
+    tribunales_completos = 0
     tribunales_vacios = 0
     
     for departamento in todos_tribunales.keys():
-        #print(f"\n{'='*60}")
-        #print(f"DEPARTAMENTO: {departamento}")
-        #print(f"{'='*60}")
-        
         tribunales = todos_tribunales[departamento]
         asignacion = todas_asignaciones[departamento]
         
@@ -169,42 +179,43 @@ def main():
             num_prof = len(profes)
             num_alum = len(alumnos)
             
-            # Solo mostrar tribunales con profesores
             if num_prof > 0:
-                # Indicador de ocupación
                 if num_alum == 0:
-                    estado = "VACÍO"
                     tribunales_vacios += 1
-                elif num_alum <= 3:
-                    estado = "BAJA OCUPACIÓN"
-                elif num_alum >= 4 and num_alum < 6:
-                    estado = "ÓPTIMO"
+                elif num_alum >= 4:
                     tribunales_completos += 1
-                elif num_alum == 6:
-                    estado = "COMPLETO (6/6)"
-                    tribunales_completos += 1
-                
-                print(f"\n     TRIBUNAL: {turno} {estado}")
-                print(f"     Profesores ({num_prof}): {profes}")
-                print(f"     Alumnos ({num_alum}): {list(alumnos.keys())}")
                 
                 total_tribunales += 1
                 total_alumnos_asignados += num_alum
     
-    # Resumen global
+    # Compilar estadísticas
+    stats = {
+        'total_tribunales': total_tribunales,
+        'tribunales_optimos': tribunales_completos,
+        'tribunales_vacios': tribunales_vacios,
+        'total_alumnos_asignados': total_alumnos_asignados,
+        'promedio_alumnos_tribunal': round(total_alumnos_asignados / total_tribunales, 2) if total_tribunales > 0 else 0
+    }
+    
     print(f"\n{'='*80}")
     print("ESTADÍSTICAS GLOBALES")
     print(f"{'='*80}")
-    print(f"  Total tribunales activos: {total_tribunales}")
-    print(f"  Tribunales óptimos (≥4 alumnos): {tribunales_completos}")
-    print(f"  Tribunales vacíos: {tribunales_vacios}")
-    print(f"  Total alumnos asignados: {total_alumnos_asignados}")
-    if total_tribunales > 0:
-        print(f"  Promedio alumnos/tribunal: {total_alumnos_asignados/total_tribunales:.2f}")
+    print(f"  Total tribunales activos: {stats['total_tribunales']}")
+    print(f"  Tribunales óptimos (≥4 alumnos): {stats['tribunales_optimos']}")
+    print(f"  Tribunales vacíos: {stats['tribunales_vacios']}")
+    print(f"  Total alumnos asignados: {stats['total_alumnos_asignados']}")
+    print(f"  Promedio alumnos/tribunal: {stats['promedio_alumnos_tribunal']}")
     
     print(f"\n{'='*80}")
     print("PROCESO COMPLETADO")
     print(f"{'='*80}\n")
+    
+    return stats
+
+
+def main():
+    """Ejecuta el pipeline con configuraci�n por defecto."""
+    run_pipeline(PATH, OUTPUT_DIR, seed=42)
 
 
 if __name__ == "__main__":
