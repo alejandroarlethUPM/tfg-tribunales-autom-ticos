@@ -18,12 +18,12 @@ sys.dont_write_bytecode = True
 # ============================================================================
 # CONFIGURACIÓN
 # ============================================================================
-PATH = "C:/Users/A/Desktop/TFG/src/data/"
+PATH = "C:/Users/A/Desktop/TFG/src/back/data/"
 FILENAME_DISPONIBILIDAD = "disponibilidad_TFG.xlsx"
 FILENAME = "TFGs_presentados_enviar.xlsx"
 FILENAME_TFGS = "TFGs_por_dptos.xlsx"
 # Salida de CSVs por grado
-OUTPUT_DIR = "C:/Users/A/Desktop/TFG/src/outputs/"
+OUTPUT_DIR = "C:/Users/A/Desktop/TFG/src/back/outputs/"
 # Parámetros de tribunales
 INIT_FRANJA = 4  # columna donde comienzan las franjas horarias
 NUM_FRANJAS = 5  # número total de franjas horarias
