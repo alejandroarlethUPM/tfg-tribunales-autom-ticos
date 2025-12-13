@@ -35,6 +35,10 @@ MIN_ESTUDIANTES_POR_TRIBUNAL = 4  # mínimo de estudiantes por tribunal
 # MAIN
 # ============================================================================
 def main():
+    # Fijar semilla para resultados reproducibles
+    import random
+    random.seed(42)
+    
     # 0. AGRUPAR TFGs POR DEPARTAMENTOS (pre-procesamiento)
     print("="*80)
     print("PASO 0: AGRUPANDO TFGs POR DEPARTAMENTOS")
