@@ -111,11 +111,20 @@ async def procesar_tribunales(
         raise HTTPException(status_code=500, detail=f"Error procesando: {str(e)}")
     
     finally:
-        # Limpiar directorios temporales
+        # Cerrar explícitamente los uploads y limpiar temporales (ignorar bloqueos en Windows)
+        try:
+            await disponibilidad.close()
+        except Exception:
+            pass
+        try:
+            await tfgs.close()
+        except Exception:
+            pass
+
         if temp_input_dir and os.path.exists(temp_input_dir):
-            shutil.rmtree(temp_input_dir)
+            shutil.rmtree(temp_input_dir, ignore_errors=True)
         if temp_output_dir and os.path.exists(temp_output_dir):
-            shutil.rmtree(temp_output_dir)
+            shutil.rmtree(temp_output_dir, ignore_errors=True)
 
 
 @app.get("/descargar")

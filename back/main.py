@@ -214,7 +214,7 @@ def run_pipeline(input_dir, output_dir, seed=42):
 
 
 def main():
-    """Ejecuta el pipeline con configuración por defecto."""
+    #Ejecuta el pipeline con configuraciï¿½n por defecto.
     run_pipeline(PATH, OUTPUT_DIR, seed=42)
 
 
