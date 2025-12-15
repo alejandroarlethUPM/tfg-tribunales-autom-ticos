@@ -8,7 +8,7 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: url('/fondo.jpg') center center / cover no-repeat fixed;
+  background: url('/imagenes/fondo.jpg') center center / cover no-repeat fixed;
   min-height: 100vh;
   position: relative;
 }
@@ -30,7 +30,7 @@ body::after {
 
 body::before {
   left: -10px;
-  background-image: url('/logo_upm.png');
+  background-image: url('/imagenes/logo_upm.png');
   width: 200px;
   height: 200px;
   top: 16px;
@@ -38,7 +38,7 @@ body::before {
 
 body::after {
   right: 18px;
-  background-image: url('/logo_etsinff.png');
+  background-image: url('/imagenes/logo_etsinff.png');
   top: 16px;
 }
 

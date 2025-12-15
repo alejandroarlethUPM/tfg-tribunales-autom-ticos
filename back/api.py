@@ -15,10 +15,7 @@ import json
 import io
 
 # Importar funciones del pipeline
-import sys
-sys.path.append(os.path.dirname(__file__))
-
-from main import run_pipeline
+from .main import run_pipeline
 
 # ============================================================================
 # CONFIGURACIÓN
