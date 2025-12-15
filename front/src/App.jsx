@@ -76,18 +76,18 @@ function App() {
   return (
     <div className="container">
       <header className="header">
-        <h1>🎓 Asignación Automática de Tribunales TFG</h1>
+        <h1>Asignación Automática de Tribunales TFG</h1>
         <p>Sistema de creación de tribunales para trabajos de fin de grado</p>
       </header>
 
       <main className="main">
         {/* Formulario de subida */}
         <section className="upload-section">
-          <h2>Paso 1: Sube los archivos Excel</h2>
+          <h2>Sube los archivos Excel</h2>
           <form onSubmit={handleSubmit} className="form">
             <div className="form-group">
               <label htmlFor="disponibilidad">
-                📋 Disponibilidad de Profesores
+                Disponibilidad de Profesores
               </label>
               <input
                 type="file"
@@ -101,7 +101,7 @@ function App() {
 
             <div className="form-group">
               <label htmlFor="tfgs">
-                📚 TFGs Presentados
+                TFGs Presentados
               </label>
               <input
                 type="file"
@@ -118,7 +118,7 @@ function App() {
               disabled={loading}
               className="btn-submit"
             >
-              {loading ? '⏳ Procesando...' : '🚀 Generar Tribunales'}
+              {loading ? 'Procesando...' : 'Generar Tribunales'}
             </button>
           </form>
         </section>
@@ -126,7 +126,7 @@ function App() {
         {/* Mostrar error */}
         {error && (
           <section className="error-section">
-            <h2>❌ Error</h2>
+            <h2>Error</h2>
             <p>{error}</p>
           </section>
         )}
@@ -134,9 +134,9 @@ function App() {
         {/* Mostrar estadísticas */}
         {stats && (
           <section className="stats-section">
-            <h2>✅ Resultados</h2>
+            <h2>Resultados</h2>
             <div className="download-section">
-              <p>📦 ¡Tribunales generados exitosamente!</p>
+              <p>¡Tribunales generados exitosamente!</p>
               <p className="info">El archivo ZIP ha sido descargado automáticamente</p>
               <p className="success-msg">Contiene los CSVs con las asignaciones por grado</p>
             </div>
@@ -146,10 +146,10 @@ function App() {
         {/* Instrucciones */}
         {!stats && (
           <section className="info-section">
-            <h2>📖 Instrucciones</h2>
+            <h2>Instrucciones</h2>
             <ol>
-              <li>Descarga el Excel de disponibilidad de profesores</li>
-              <li>Descarga el Excel con los TFGs presentados</li>
+              <li>Descarga el Excel de disponibilidad de profesores: <em>disponibilidad_TFG.xlsx</em></li>
+              <li>Descarga el Excel con los TFGs presentados: <em>TFGs_presentados_enviar.xlsx</em></li>
               <li>Sube ambos archivos en este formulario</li>
               <li>Haz clic en "Generar Tribunales"</li>
               <li>Descarga los CSVs con las asignaciones por grado</li>
@@ -159,7 +159,10 @@ function App() {
       </main>
 
       <footer className="footer">
-        <p>Sistema de Asignación de Tribunales TFG - 2025</p>
+        <p>Universidad Politécnica de Madrid</p>
+        <p>Escuela Técnica Superior de Ingenieros Informáticos</p>
+        <div className="footer-separator"></div>
+        <p>Automatización en la Generación de Tribunales de TFG © 2025</p>
       </footer>
     </div>
   )
