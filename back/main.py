@@ -19,12 +19,12 @@ sys.dont_write_bytecode = True
 # CONFIGURACIÓN
 # ============================================================================
 # Usar rutas relativas para API (se sobrescriben en run_pipeline)
-PATH = "C:/Users/A/Desktop/TFG/src/back/data/"
+PATH = "C:/Users/A/Desktop/TFG/src/back/data/prueba3/"
 FILENAME_DISPONIBILIDAD = "disponibilidad_TFG.xlsx"
 FILENAME = "TFGs_presentados_enviar.xlsx"
 FILENAME_TFGS = "TFGs_por_dptos.xlsx"
 # Salida de CSVs por grado
-OUTPUT_DIR = "C:/Users/A/Desktop/TFG/src/back/outputs/"
+OUTPUT_DIR = "C:/Users/A/Desktop/TFG/src/back/outputs/prueba3/"
 
 # Parámetros de tribunales
 INIT_FRANJA = 4  # columna donde comienzan las franjas horarias
@@ -70,19 +70,19 @@ def run_pipeline(input_dir, output_dir, seed=42):
     
     # 1. CARGAR DISPONIBILIDAD DE PROFESORES
     file_disponibilidad = load_disponibilidad(path, FILENAME_DISPONIBILIDAD)
-    
+
     # 2. CONSTRUIR MAPEO PROFESOR → DEPARTAMENTO
     profesor_departamento, profesores_por_dpto = build_profesor_departamento(
         file_disponibilidad, path, FILENAME_DISPONIBILIDAD
     )
     #print(f"    Total de profesores mapeados: {len(profesor_departamento)}")
     #print(f"    Departamentos: {list(profesores_por_dpto.keys())}")
-    
+
     # 3. CARGAR ESTUDIANTES
     file_tfgs = load_tfgs_por_dptos(path, FILENAME_TFGS)
     estudiantes = cargar_estudiantes(file_tfgs)
     #print(f"    Total de estudiantes cargados: {len(estudiantes)}")
-    
+
     # Contar la cantidad de estudiantes por departamento
     estudiantes_por_dpto = {}
     for _, datos in estudiantes.items():
@@ -90,12 +90,12 @@ def run_pipeline(input_dir, output_dir, seed=42):
         if dpto not in estudiantes_por_dpto:
             estudiantes_por_dpto[dpto] = 0
         estudiantes_por_dpto[dpto] += 1
-    
+
     #print("    Estudiantes por departamento:")
     for dpto, count in estudiantes_por_dpto.items():
         #print(f"      - {dpto}: {count}")
         pass
-    
+
     # ========================================================================
     # PROCESAMIENTO POR DEPARTAMENTO
     # ========================================================================

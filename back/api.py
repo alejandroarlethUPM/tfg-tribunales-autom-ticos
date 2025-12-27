@@ -15,7 +15,7 @@ import json
 import io
 
 # Importar funciones del pipeline
-from .main import run_pipeline
+from main import run_pipeline
 
 # ============================================================================
 # CONFIGURACIÓN
