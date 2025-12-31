@@ -36,7 +36,7 @@ def rebalancear_tribunales(todos_tribunales, todas_asignaciones, min_alumnos=4, 
                     'num_prof': num_prof
                 })
                 
-                # Si tiene ≤3 alumnos, todos van al pool
+                # Si tiene <=3 alumnos, todos van al pool
                 if num_alum <= 3:
                     for alumno_id, datos in alumnos.items():
                         pool_alumnos.append({
@@ -44,7 +44,7 @@ def rebalancear_tribunales(todos_tribunales, todas_asignaciones, min_alumnos=4, 
                             'datos': datos
                         })
     
-    print(f"\n  Tribunales con ≤3 alumnos: {sum(1 for t in tribunales_info if t['num_alumnos'] <= 3)}")
+    print(f"\n  Tribunales con <=3 alumnos: {sum(1 for t in tribunales_info if t['num_alumnos'] <= 3)}")
     print(f"  Alumnos a redistribuir: {len(pool_alumnos)}")
     
     # 2. Filtrar tribunales que necesitan rebalanceo
