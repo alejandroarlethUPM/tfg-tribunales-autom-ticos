@@ -4,8 +4,9 @@ Recibe Excel de entrada, ejecuta el pipeline y devuelve ZIP con CSV resultados.
 """
 
 from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import tempfile
 import shutil
 import os
@@ -133,6 +134,41 @@ async def descargar_resultados():
     return JSONResponse(
         {"mensaje": "Usar el ZIP devuelto en /procesar"}
     )
+
+
+# ============================================================================
+# FRONTEND SERVING (SPA Support)
+# ============================================================================
+
+# Path to the frontend build directory
+FRONTEND_BUILD_PATH = os.path.join(os.path.dirname(__file__), "..", "front", "dist")
+
+# Serve frontend static files
+if os.path.exists(FRONTEND_BUILD_PATH):
+    app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_BUILD_PATH, "assets")), name="assets")
+
+@app.get("/", include_in_schema=False)
+async def serve_frontend():
+    """Serve the frontend application"""
+    index_path = os.path.join(FRONTEND_BUILD_PATH, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    else:
+        return RedirectResponse(url="/docs")
+
+# Catch-all route for frontend routing (SPA support)
+@app.get("/{full_path:path}", include_in_schema=False)
+async def serve_frontend_routes(full_path: str):
+    """Serve frontend for any unmatched routes (SPA routing support)"""
+    # Skip API routes and static assets
+    if full_path.startswith("api/") or full_path.startswith("docs") or full_path.startswith("openapi.json"):
+        return RedirectResponse(url="/docs")
+    
+    index_path = os.path.join(FRONTEND_BUILD_PATH, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    else:
+        return RedirectResponse(url="/docs")
 
 
 # ============================================================================
