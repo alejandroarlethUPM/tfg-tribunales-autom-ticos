@@ -31,31 +31,50 @@ def asignar_alumnos_a_tribunales(tribunales, estudiantes, dept_tribunal):
     Asigna alumnos de un departamento a los tribunales.
     
     Args:
-        tribunales (dict): diccionario turno → set de profesores
+        tribunales (dict): diccionario turno → list[set de profesores]
+                          Ejemplo: {"9:00": [{p1,p2,p3}, {p4,p5,p6}]}
         estudiantes (dict): diccionario alumno_id → datos
         dept_tribunal (str): nombre del departamento
     
     Returns:
-        dict: diccionario turno → {alumno_id: datos}
+        dict: diccionario turno → list[{'profesores': set, 'alumnos': dict}]
+              Ejemplo: {"9:00": [
+                  {'profesores': {p1,p2,p3}, 'alumnos': {alumno1: datos, ...}},
+                  {'profesores': {p4,p5,p6}, 'alumnos': {alumno7: datos, ...}}
+              ]}
     """
-    asignacion = {t: {} for t in tribunales}
+    asignacion = {t: [] for t in tribunales}
     disponibles = {k: v for k, v in estudiantes.items() if v['departamento'] == dept_tribunal}
     
-    for turno, profes in {t: list(p) for t, p in tribunales.items()}.items():
-        if not profes:
-            continue
+    for turno, lista_tribunales in tribunales.items():
+        asignaciones_turno = []
         
-        asignados = {}
-        for trabajo, datos in list(disponibles.items()):
-            if len(asignados) == 6:
-                break
-            # No asignar si el tutor está en el tribunal
-            if any(t in profes for t in datos['tutores']):
+        for tribunal_prof in lista_tribunales:
+            profes = list(tribunal_prof)
+            
+            if not profes:
+                asignaciones_turno.append({
+                    'profesores': set(),
+                    'alumnos': {}
+                })
                 continue
-            # Asignar
-            asignados[trabajo] = datos
-            del disponibles[trabajo]
+            
+            asignados = {}
+            for trabajo, datos in list(disponibles.items()):
+                if len(asignados) == 6:
+                    break
+                # No asignar si el tutor está en el tribunal
+                if any(t in profes for t in datos['tutores']):
+                    continue
+                # Asignar
+                asignados[trabajo] = datos
+                del disponibles[trabajo]
+            
+            asignaciones_turno.append({
+                'profesores': tribunal_prof,  # Mantener el set original
+                'alumnos': asignados
+            })
         
-        asignacion[turno] = asignados
+        asignacion[turno] = asignaciones_turno
     
     return asignacion
